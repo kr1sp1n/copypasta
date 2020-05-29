@@ -1,0 +1,9 @@
+{
+  "$schema": "https://deno.land/x/denon/schema.json",
+  "scripts": {
+    "start": "./src/main.js"
+  },
+  "allow": [
+    "net"
+  ]
+}
