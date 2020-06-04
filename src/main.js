@@ -27,7 +27,11 @@ function getIndex(buffers) {
         <br/><br/>
         <input type="submit" value="Paste"></input>
       </form>
-      <ul>${buffers.sort((a, b) => b.timestamp - a.timestamp ).map((b) => `<li>${b.value.substring(0, 139)} <a href="/copy/${b.id}">raw</a></li>`).join('')}</ul>
+      <ul>${
+    buffers.sort((a, b) => b.timestamp - a.timestamp).map((b) =>
+      `<li>${b.value.substring(0, 139)} <a href="/copy/${b.id}">raw</a></li>`
+    ).join("")
+  }</ul>
     </body>
   </html>
   `;
@@ -50,27 +54,31 @@ const routes = {
   "GET /": (req) => {
     return {
       body: getIndex(buffers),
-      headers: new Headers({ 'content-type': 'text/html' }),
-    }
+      headers: new Headers({ "content-type": "text/html" }),
+    };
   },
   "GET /copy/:id": (req) => {
-    const { id } = req.params
-    const buf = buffers.find((b) => b.id === id)
-    if (buf) return {
-      body: buf.value,
-      headers: new Headers({ 'content-type': 'text/plain'}),
+    const { id } = req.params;
+    const buf = buffers.find((b) => b.id === id);
+    if (buf) {
+      return {
+        body: buf.value,
+        headers: new Headers({ "content-type": "text/plain" }),
+      };
     }
   },
   "POST /paste": async (req) => {
     const body = await readBody(req);
-    if (body !== "") buffers.push({
-      id: v4.generate(),
-      value: body.text,
-      timestamp: (new Date()).getTime(),
-    })
+    if (body !== "") {
+      buffers.push({
+        id: v4.generate(),
+        value: body.text,
+        timestamp: (new Date()).getTime(),
+      });
+    }
     return {
       status: 301,
-      headers: new Headers({ location: '/'}),
+      headers: new Headers({ location: "/" }),
     };
   },
 };
@@ -78,33 +86,33 @@ const routes = {
 async function main() {
   const server = serve({ port });
   console.log(`Listening on port ${port}`);
-  
+
   for await (const req of server) {
     const route = `${req.method} ${req.url}`;
-    const copyMatch = route.match(/\/copy\/(\S+)/)
-  
+    const copyMatch = route.match(/\/copy\/(\S+)/);
+
     // Default: 404
-    const defaultResponse = { status: 404, body: `Not found: ${route}` }
-  
-    let response
-  
+    const defaultResponse = { status: 404, body: `Not found: ${route}` };
+
+    let response;
+
     if (routes.hasOwnProperty(route)) {
       response = routes[route](req);
     }
-  
+
     if (copyMatch) {
       req.params = {
-        id: copyMatch[1]
-      }
-      response = routes['GET /copy/:id'](req);
+        id: copyMatch[1],
+      };
+      response = routes["GET /copy/:id"](req);
     }
-  
-    if (!response) response = defaultResponse
-  
+
+    if (!response) response = defaultResponse;
+
     req.respond(await response);
   }
 }
 
 if (import.meta.main) {
-  main()
+  main();
 }

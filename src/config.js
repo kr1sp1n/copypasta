@@ -1,5 +1,5 @@
 const config = {
-  port: Deno.env.PORT || 8080,
+  port: Number(Deno.env.get("PORT")) || 8080,
 };
 
 export default config;

@@ -4,6 +4,7 @@
     "start": "./src/main.js"
   },
   "allow": [
-    "net"
+    "net",
+    "env"
   ]
 }
