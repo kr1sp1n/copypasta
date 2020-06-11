@@ -5627,8 +5627,9 @@ System.register(
       const b = buf || [];
       options = options || {};
       let node = options.node || _nodeId;
-      let clockseq = options.clockseq !== undefined ? options.clockseq
-      : _clockseq;
+      let clockseq = options.clockseq !== undefined
+        ? options.clockseq
+        : _clockseq;
       if (node == null || clockseq == null) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const seedBytes = options.random ||
@@ -6536,7 +6537,7 @@ System.register(
     </head>
     <body>
       <h1>copypasta</h1>
-      <form action="/paste" method="post" enctype="text/plain">
+      <form action="/paste" method="post" enctype="application/x-www-form-urlencoded">
         <textarea name="text" rows="16" cols="64" autofocus="true"></textarea>
         <br/><br/>
         <input type="submit" value="Paste"></input>
@@ -6554,13 +6555,17 @@ System.register(
       return index;
     }
     async function readBody(req) {
-      const data = decoder.decode(await Deno.readAll(req.body));
-      // TODO: parse only if form-data
-      // Use URL to parse form data:
-      const url = new URL(`http://fake.net?${data}`);
-      const result = {};
-      url.searchParams.forEach((value, key) => (result[key] = value));
-      return result;
+      const data = decoder.decode(await Deno.readAll(req.body)).replace(
+        /\+/g,
+        " ",
+      );
+      const params = Object.fromEntries(
+        data.split("&").map((param) => {
+          const [key, value] = param.split("=");
+          return [key, decodeURIComponent(value)];
+        }),
+      );
+      return params;
     }
     async function main() {
       const server = deps_js_1.serve({ port });
