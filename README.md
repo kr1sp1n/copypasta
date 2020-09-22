@@ -6,7 +6,7 @@ I wanted to play around with [deno](https://deno.land/) and this is my first pro
 ## run
 
 1. [Install deno](https://deno.land/#installation)
-2. Execute `deno run --allow-net https://raw.githubusercontent.com/kr1sp1n/copypasta/master/copypasta.bundle.js`
+2. Execute `deno run --allow-net --allow-env https://raw.githubusercontent.com/kr1sp1n/copypasta/master/copypasta.bundle.js`
 3. Goto http://localhost:8080/ and play around.
 
 ## develop
